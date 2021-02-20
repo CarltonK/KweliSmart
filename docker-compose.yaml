@@ -1,0 +1,19 @@
+version: '3.3' # Requires Docker engine 18.02.0+\
+
+services:
+  kweli-smart:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:   # Binds volume to enable working through docker locally
+      - type: bind
+        source: .
+        target: /app/
+    ports:
+      - 5001:5001
+      - 4999:4999
+    network_mode: "host"
+    # attach terminal
+    tty: true
+    environment: 
+      NODE_ENV: "local"
