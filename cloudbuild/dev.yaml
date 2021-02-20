@@ -23,7 +23,7 @@ steps:
           awk '{gsub(/<PROJECT_ID>/,"'${_PROJECT_ID}'")}1' /workspace/.firebaserc > /workspace/tmp.firebaserc && mv /workspace/tmp.firebaserc /workspace/.firebaserc
 
 
-  - id: Build functions
+  - id: Build and deploy
     name: node:10.22-alpine
     entrypoint: sh
     args:
@@ -37,18 +37,6 @@ steps:
 
           npm run build
 
-  - id: Deploy functions
-    name: node:10.22-alpine
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
           firebase deploy --only functions --project=${_PROJECT_ID} --token=${_FIREBASE_TOKEN}
 
-  - id: Deploy firestore rules
-    name: node:10.22-alpine
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
           firebase deploy --only firestore:rules --project=${_PROJECT_ID} --token=${_FIREBASE_TOKEN}
