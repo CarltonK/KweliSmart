@@ -8,7 +8,7 @@ logger.setLogLevel('debug');
 // Define functions region
 const regionalFunctions = functions.runWith({
   timeoutSeconds: 60,
-  memory: '512MB'
+  memory: '512MB',
 }).region('europe-west3');
 
 

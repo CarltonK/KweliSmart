@@ -14,15 +14,18 @@ export default class HttpHandler {
         const { method } = request;
 
          // return 405 METHOD NOT ALLOWED
-        if (method !== 'POST') { response.status(405).send({
-            status: false,
-            detail: `${method.toUpperCase()} not allowed`
-        }); return; };
+        if (method !== 'POST') {
+            response.status(405).send({
+                status: false,
+                detail: `${method.toUpperCase()} not allowed`,
+            }); 
+            return; 
+        };
 
         // return 404 NOT FOUND
         response.status(404).send({
             status: false,
-            detail: 'The resource you requested is not available'
+            detail: 'The resource you requested is not available',
         });
         return;
     }
