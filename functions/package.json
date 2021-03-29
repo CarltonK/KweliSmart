@@ -6,7 +6,9 @@
     "build:dev": "tsc --watch",
     "shell": "npm run build && firebase functions:shell",
     "kill": "kill -9 $(ps aux | grep '\\sjava\\s' | awk '{print $2}') || true",
-    "serve": "npm run kill && npm run build && firebase emulators:start",
+    "serve": "npm run kill && npm run build && firebase emulators:start --import=../data",
+    "serve:dev": "npm run lint && npm run build && firebase emulators:start --import=../data",
+    "local:export": "firebase emulators:export ../data",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
