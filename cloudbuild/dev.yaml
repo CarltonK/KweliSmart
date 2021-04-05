@@ -29,12 +29,31 @@ steps:
     args:
       - '-c'
       - |
+
+          echo
+          echo "**************************************"
+          echo "* Install Modules *"
+          echo "**************************************"
+          echo
+
           npm install -g firebase-tools
           npm install --save firebase-functions@latest
 
           cd ./functions
           npm install
 
+          echo
+          echo "**************************************"
+          echo "* Deploy Functions *"
+          echo "**************************************"
+          echo
+
           firebase deploy --only functions --project=${_PROJECT_ID} --token=${_FIREBASE_TOKEN}
+
+          echo
+          echo "**************************************"
+          echo "* Deploy Rules *"
+          echo "**************************************"
+          echo
 
           firebase deploy --only firestore:rules --project=${_PROJECT_ID} --token=${_FIREBASE_TOKEN}
