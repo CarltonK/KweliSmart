@@ -15,7 +15,7 @@ service cloud.firestore {
     }
 
     match /users/{user} {
-      allow create, update: if isOwner(user);
+      allow get, create, update: if isOwner(user);
     }
   }
 }
