@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const firebase = require("@firebase/rules-unit-testing");
-const MY_PROJECT_ID = 'kwelismart';
+const MY_PROJECT_ID = '<PROJECT_ID>';
 /**
  * MY AUTH
 */
