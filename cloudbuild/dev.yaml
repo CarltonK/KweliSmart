@@ -7,7 +7,7 @@ steps:
       - |
           echo
           echo "**********************************************"
-          echo "* Set backend project Id ${_PROJECT_ID} *"
+          echo "* Set backend project Id *"
           echo "**********************************************"
           echo
 

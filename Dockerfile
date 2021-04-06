@@ -35,4 +35,4 @@ COPY . /app/
 
 WORKDIR /app/functions
 
-CMD [ "npm", "run", "serve" ]
+CMD [ "npm", "run", "serve:dev" ]
