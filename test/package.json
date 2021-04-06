@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint \"src/**/*\"",
     "build": "tsc",
-    "test": "npm run lint && npm run build && mocha -r ts-node/register src/test.ts --exit"
+    "test": "npm run lint && mocha -r ts-node/register src/test.ts --exit"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
     "@typescript-eslint/parser": "^4.21.0",
     "eslint": "^7.23.0",
     "eslint-plugin-import": "^2.22.1",
+    "firebase-admin": "^9.6.0",
     "mocha": "^8.3.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
