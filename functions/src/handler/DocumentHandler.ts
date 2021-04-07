@@ -11,7 +11,7 @@ export default class DocumentHandler {
         this.logger.setLogLevel('debug')
     }
 
-    public async newUserDocumentHandler(snapshot: firestore.QueryDocumentSnapshot, context: functions.EventContext) {
+    async newUserDocumentHandler(snapshot: firestore.QueryDocumentSnapshot, context: functions.EventContext) {
 
         try {
             // Identifiers
