@@ -25,6 +25,7 @@ module.exports = {
     ],
     rules: {
       quotes: ["error", "single"],
+      "@typescript-eslint/no-explicit-any": "off"
     },
   };
   
