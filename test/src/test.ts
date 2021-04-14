@@ -1,6 +1,6 @@
 import * as firebase from '@firebase/rules-unit-testing';
 
-const MY_PROJECT_ID = '<PROJECT_ID>';
+const MY_PROJECT_ID = 'kwelismart';
 
 /**
  * MY AUTH
@@ -85,10 +85,58 @@ describe('KweliSmart', () => {
         await firebase.assertFails(testDoc.set({ foo: 'bar' }));
     });
 
-    it('Can allow a user to create their document', async () => {
+    it('Can\'t allow a user to create their document if required fields are missing', async () => {
         const db = getFirestore(myAuth);
         const testDoc = db.collection('users').doc(myId);
-        await firebase.assertSucceeds(testDoc.set({ foo: 'bar' }));
+        await firebase.assertFails(testDoc.set({ foo: 'bar' }));
+    });
+
+    it('Can\'t allow a user to create their document if nationalId is less than 7 digits', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.set({ nationalIdNumber: '123456' }));
+    });
+
+    it('Can\'t allow a user to create their document if nationalId is greater than 8 digits', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.set({ nationalIdNumber: '123456789' }));
+    });
+
+    it('Can\'t allow a user to create their document if nationalId is not a string', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.set({ nationalIdNumber: 123456789 }));
+    });
+
+    it('Can\'t allow a user to create their document if phoneNumber is not a string', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.set({ phoneNumber: 1234567890 }));
+    });
+
+    it('Can\'t allow a user to create their document if phoneNumber is not 10 digits', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.set({ phoneNumber: '123456789' }));
+    });
+
+    it('Can\'t allow a user to create their document if phoneNumber does not start with 07 or 01', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.set({ phoneNumber: '123456789' }));
+    });
+
+    it('Can allow a user to create their document if a required field is missing', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.set({ nationalIdNumber: '12345678', emailAddress: myEmail }));
+    });
+
+    it('Can allow a user to create their document if it is valid', async () => {
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertSucceeds(testDoc.set({ phoneNumber: '0712345678', nationalIdNumber: '12345678', emailAddress: myEmail }));
     });
 
 
