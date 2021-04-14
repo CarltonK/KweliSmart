@@ -9,7 +9,7 @@ export default class HttpHandler {
         this.logger.setLogLevel('debug')
     }
 
-    public async handleRequest(request: functions.https.Request, response: functions.Response<any>): Promise<void> {
+    async handleRequest(request: functions.https.Request, response: functions.Response<any>): Promise<void> {
         this.logger.log(request.path, request.method);
         const { method } = request;
 
