@@ -163,6 +163,15 @@ describe('KweliSmart', () => {
         await firebase.assertFails(testDoc.update({ foo: 'not bar' }));
     });
 
+    it('Can\'t allow a user to update some fields in their document', async () => {
+        const admin = getAdminFirestore();
+        await admin.collection('users').doc(myId).set({ foo: 'bar', phoneNumber: '0712345678' });
+
+        const db = getFirestore(myAuth);
+        const testDoc = db.collection('users').doc(myId);
+        await firebase.assertFails(testDoc.update({ foo: 'not bar', phoneNumber: '0787654321' }));
+    });
+
     it('Can allow a user to update their document', async () => {
         const admin = getAdminFirestore();
         await admin.collection('users').doc(myId).set({ foo: 'bar' });
