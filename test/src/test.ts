@@ -1,4 +1,7 @@
 import * as firebase from '@firebase/rules-unit-testing';
+import UserDocumentHandler from './handler/users-user';
+
+const GlobalUserDocumentHandler = new UserDocumentHandler();
 
 const MY_PROJECT_ID = '<PROJECT_ID>';
 
@@ -32,29 +35,27 @@ describe('KweliSmart', () => {
 
     /**
      * USER GET OPERATIONS *
-    */
+     */
 
-    it('Can\'t allow an unauthenticated user to get a users document', async () => {
-        const db = getFirestore();
-        const testDoc = db.collection('users').doc(myId);
-        await firebase.assertFails(testDoc.get());
-    });
+    it(
+        'Can\'t allow an unauthenticated user to get a users document',
+        GlobalUserDocumentHandler.getUnauthenticated.bind(GlobalUserDocumentHandler),
+    );
 
-    it('Can\'t allow a user to get another users document', async () => {
-        const db = getFirestore(theirAuth);
-        const testDoc = db.collection('users').doc(myId);
-        await firebase.assertFails(testDoc.get());
-    });
+    it(
+        'Can\'t allow a user to get another users document',
+        GlobalUserDocumentHandler.getOthersDocument.bind(GlobalUserDocumentHandler),
+    );
 
-    it('Can\'t allow an unauthenticated user to get all documents in the users collection', async () => {
-        const db = getFirestore();
-        await firebase.assertFails(db.collection('users').get());
-    });
+    it(
+        'Can\'t allow an unauthenticated user to get all documents in the users collection',
+        GlobalUserDocumentHandler.listUsersCollectionUnauthenticated.bind(GlobalUserDocumentHandler),
+    );
 
-    it('Can\'t allow a user to get all documents in the users collection', async () => {
-        const db = getFirestore(myAuth);
-        await firebase.assertFails(db.collection('users').get());
-    });
+    it(
+        'Can\'t allow a user to get all documents in the users collection',
+        GlobalUserDocumentHandler.listUsersCollection.bind(GlobalUserDocumentHandler),
+    );
 
     it('Can\'t allow an unauthenticated user to get their document', async () => {
         const db = getFirestore();
@@ -71,7 +72,7 @@ describe('KweliSmart', () => {
 
     /**
      * USER CREATE OPERATIONS *
-    */
+     */
 
     it('Can\'t allow an unauthenticated user to create their document', async () => {
         const db = getFirestore();
@@ -142,17 +143,13 @@ describe('KweliSmart', () => {
 
     /**
      * USER UPDATE OPERATIONS *
-    */
+     */
 
 
-    it('Can\'t allow an unauthenticated user to update a document', async () => {
-        const admin = getAdminFirestore();
-        await admin.collection('users').doc(myId).set({ foo: 'bar' });
-
-        const db = getFirestore();
-        const testDoc = db.collection('users').doc(myId);
-        await firebase.assertFails(testDoc.update({ foo: 'not bar' }));
-    });
+    it(
+        'Can\'t allow an unauthenticated user to update a document',
+        GlobalUserDocumentHandler.updateUnauthenticated.bind(GlobalUserDocumentHandler),
+    );
 
     it('Can\'t allow a user to update another users document', async () => {
         const admin = getAdminFirestore();
@@ -184,7 +181,7 @@ describe('KweliSmart', () => {
 
     /**
      * USER DELETE OPERATIONS *
-    */
+     */
 
 
     it('Can\'t allow an unauthenticated user to delete their document', async () => {
