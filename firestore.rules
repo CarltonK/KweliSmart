@@ -2,9 +2,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // function isAuthenticated() {
-    //   return request.auth != null;
-    // }
+    function isAuthenticated() {
+      return request.auth != null;
+    }
 
     function isOwner(uid) {
       return request.auth.uid == uid;
@@ -55,6 +55,19 @@ service cloud.firestore {
       && isNationalIdValid() && isPhoneNumberValid();
 
       allow update: if isOwner(user) && areUpdatedValidFields();
+    }
+
+    match /statements/{statement} {
+      // CREATE
+      // user must exist
+      function isStatementValid() {
+        let uid = request.resource.data.userId;
+        return uid != null 
+          && uid is string 
+          && exists(/databases/$(database)/documents/users/$(uid));
+      }
+
+      allow create: if isAuthenticated() && isStatementValid();
     }
   }
 }
