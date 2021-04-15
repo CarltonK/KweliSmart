@@ -10,6 +10,10 @@ service cloud.firestore {
       return request.auth.uid == uid;
     }
 
+    function isUserExistent(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId));
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -58,16 +62,17 @@ service cloud.firestore {
     }
 
     match /statements/{statement} {
-      // CREATE
+      // CREATE, GET
       // user must exist
       function isStatementValid() {
         let uid = request.resource.data.userId;
         return uid != null 
           && uid is string 
-          && exists(/databases/$(database)/documents/users/$(uid));
+          && isUserExistent(uid);
       }
 
       allow create: if isAuthenticated() && isStatementValid();
+      allow get: if isAuthenticated() && isUserExistent(resource.data.userId);
     }
   }
 }
