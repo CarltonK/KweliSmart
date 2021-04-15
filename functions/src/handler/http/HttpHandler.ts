@@ -6,7 +6,7 @@ export default class HttpHandler {
     private logger: Logger = new Logger('HttpHandler');
 
     constructor() {
-        this.logger.setLogLevel('debug')
+        this.logger.setLogLevel('debug');
     }
 
     async handleRequest(request: functions.https.Request, response: functions.Response<any>): Promise<void> {
