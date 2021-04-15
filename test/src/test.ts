@@ -1,8 +1,11 @@
 import UserDocumentHandler from './handler/users-user';
+import StatementDocumentHandler from './handler/statements-statement';
 
 const GlobalUserDocumentHandler = new UserDocumentHandler();
+const GlobalStatementDocumentHandler = new StatementDocumentHandler();
 
 beforeEach(GlobalUserDocumentHandler.beforeEachCallback.bind(GlobalUserDocumentHandler));
+beforeEach(GlobalStatementDocumentHandler.beforeEachCallback.bind(GlobalStatementDocumentHandler));
 
 describe('KweliSmart', () => {
 
@@ -100,7 +103,6 @@ describe('KweliSmart', () => {
      * USER UPDATE OPERATIONS *
      */
 
-
     it(
         'Can\'t allow an unauthenticated user to update a document',
         GlobalUserDocumentHandler.denyUpdateUnauthenticated.bind(GlobalUserDocumentHandler),
@@ -126,7 +128,6 @@ describe('KweliSmart', () => {
      * USER DELETE OPERATIONS *
      */
 
-
     it(
         'Can\'t allow an unauthenticated user to delete their document',
         GlobalUserDocumentHandler.denyDeleteUnauthenticated.bind(GlobalUserDocumentHandler),
@@ -141,6 +142,49 @@ describe('KweliSmart', () => {
         'Can\'t allow a user to delete their document',
         GlobalUserDocumentHandler.denyDeleteOwn.bind(GlobalUserDocumentHandler),
     );
+
+
+
+    /**
+     * STATEMENT CREATE OPERATIONS *
+     */
+
+    it(
+        'Can\'t allow an unauthenticated user to create a statement',
+        GlobalStatementDocumentHandler.denyCreateUnauthenticated.bind(GlobalStatementDocumentHandler),
+    );
+
+    it(
+        'Can\'t allow a non existent user to create a statement',
+        GlobalStatementDocumentHandler.denyCreateIfUserNonExistent.bind(GlobalStatementDocumentHandler),
+    );
+
+    it(
+        'Can allow a user to create a statement if valid',
+        GlobalStatementDocumentHandler.allowCreateIfStatementValid.bind(GlobalStatementDocumentHandler),
+    );
+
+
+    /**
+     * STATEMENT GET OPERATIONS *
+     */
+
+    it(
+        'Can\'t allow an unauthenticated user to get a statement',
+        GlobalStatementDocumentHandler.denyGetUnauthenticated.bind(GlobalStatementDocumentHandler),
+    );
+
+    it(
+        'Can\'t allow a non existent user to get a statement',
+        GlobalStatementDocumentHandler.denyGetIfUserNonExistent.bind(GlobalStatementDocumentHandler),
+    );
+
+    it(
+        'Can allow an existing user to get their statement',
+        GlobalStatementDocumentHandler.allowGetIfValid.bind(GlobalStatementDocumentHandler),
+    );
+
 });
 
 after(GlobalUserDocumentHandler.afterAllCallback.bind(GlobalUserDocumentHandler));
+after(GlobalStatementDocumentHandler.afterAllCallback.bind(GlobalStatementDocumentHandler));
