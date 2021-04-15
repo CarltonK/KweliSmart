@@ -4,30 +4,40 @@ import * as admin from 'firebase-admin';
 
 admin.initializeApp();
 
-import HttpHandler from './handler/HttpHandler';
-import DocumentHandler from './handler/DocumentHandler';
+import HttpHandler from './handler/http/HttpHandler';
+import UserDocumentHandler from './handler/firestore/UserDocumentHandler';
+import StatementDocumentHandler from './handler/firestore/StatementDocumentHandler';
 
 const logger = new Logger('Root');
 logger.setLogLevel('debug');
 
-// Define functions region
-const regionalFunctions = functions.runWith({
+// Define functions
+const runOptions: functions.RuntimeOptions = {
   timeoutSeconds: 60,
   memory: '512MB',
-}).region('europe-west3');
+  ingressSettings: "ALLOW_ALL",
+};
+const regionalFunctions = functions.runWith(runOptions).region('europe-west3');
 
 
 const GlobalHttpHandler = new HttpHandler();
-const GlobalDocumentHandler = new DocumentHandler();
+const GlobalUserDocumentHandler = new UserDocumentHandler();
+const GlobalStatementDocumentHandler = new StatementDocumentHandler();
 
 /******************
-* Http Trigger
+* Http Trigger(s)
 ******************/
 
 export const api = regionalFunctions.https.onRequest(GlobalHttpHandler.handleRequest.bind(GlobalHttpHandler));
 
 /******************
-* Firestore Trigger
+* Firestore Trigger(s)
 ******************/
 
-export const newUserDocument = regionalFunctions.firestore.document('users/{user}').onCreate(GlobalDocumentHandler.newUserDocumentHandler.bind(GlobalDocumentHandler));
+export const newUserDocument = regionalFunctions.firestore.document('users/{user}').onCreate(
+  GlobalUserDocumentHandler.newUserDocumentHandler.bind(GlobalUserDocumentHandler)
+);
+
+export const newStatementDocument = regionalFunctions.firestore.document('statements/{statement}').onCreate(
+  GlobalStatementDocumentHandler.newStatementHandler.bind(GlobalStatementDocumentHandler)
+);
