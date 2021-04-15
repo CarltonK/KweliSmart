@@ -6,8 +6,16 @@ service firebase.storage {
       return request.auth != null;
     }
 
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
     match /{allPaths=**} {
       allow read, write: if isAuthenticated();
+    }
+
+    match /statements/{userId}/{fileName} {
+      allow create: if isAuthenticated() && isOwner(userId);
     }
   }
 }
