@@ -2,77 +2,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-
-    function isOwner(uid) {
-      return request.auth.uid == uid;
-    }
-
-    function isUserExistent(userId) {
-      return exists(/databases/$(database)/documents/users/$(userId));
-    }
-
     match /{document=**} {
       allow read, write: if false;
     }
 
-    match /users/{user} {
-
-      // CREATE
-      // Check nationalIdNumber and phoneNumber validity
-      // Check if emailAddress, phoneNumber and nationalIdNumber have all been passed
-      function isNationalIdValid() {
-        let nationalId = request.resource.data.nationalIdNumber;
-        let oldGenerationId = nationalId.size() == 7;
-        let newGenerationId = nationalId.size() == 8;
-        return nationalId is string && (oldGenerationId || newGenerationId);
-      }
-
-      function isPhoneNumberValid() {
-        let phoneNumber = request.resource.data.phoneNumber;
-        let phoneNumberSize = phoneNumber.size();
-        let oldNumberFormat = phoneNumber[0:2] == '07';
-        let newNumberFormat = phoneNumber[0:2] == '01';
-        return phoneNumber is string && phoneNumberSize == 10 && (oldNumberFormat || newNumberFormat);
-      }
-
-      function areCreatedFieldsValid() {
-        let requiredFields = ['nationalIdNumber', 'phoneNumber', 'emailAddress'];
-        return request.resource.data.keys().hasAll(requiredFields);
-      }
-
-      // UPDATE
-      // Check if nationalIdNumber, phoneNumber and emailAddress have not been updated
-      function areUpdatedValidFields() {
-        let incomingData = request.resource.data;
-        let existingData = resource.data;
-        let diffData = incomingData.diff(existingData);
-        let nonUpdatableFields = ['nationalIdNumber', 'phoneNumber', 'emailAddress'];
-        return (!diffData.affectedKeys().hasAny(nonUpdatableFields));
-      }
-
-      allow get: if isOwner(user);
-
-      allow create: if isOwner(user) && areCreatedFieldsValid()
-      && isNationalIdValid() && isPhoneNumberValid();
-
-      allow update: if isOwner(user) && areUpdatedValidFields();
-    }
-
-    match /statements/{statement} {
-      // CREATE, GET
-      // user must exist
-      function isStatementValid() {
-        let uid = request.resource.data.userId;
-        return uid != null 
-          && uid is string 
-          && isUserExistent(uid);
-      }
-
-      allow create: if isAuthenticated() && isStatementValid();
-      allow get: if isAuthenticated() && isUserExistent(resource.data.userId);
-    }
   }
 }
