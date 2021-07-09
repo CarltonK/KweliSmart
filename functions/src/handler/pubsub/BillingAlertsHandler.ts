@@ -25,7 +25,7 @@ export default class BillingAlertsHandler {
     async handleBillingData(data: any) {
         // Grab the most recent data
         const billingInfoDoc = await this.db.doc('/private/billing_info').get();
-        const spentSoFar = data.costAmount;
+        const { costAmount, costIntervalStart, budgetAmount} = data;
         const billingAlertIncrement = 0.01;
         let sendMessage = false;
         let messageString = '';
@@ -36,10 +36,10 @@ export default class BillingAlertsHandler {
             const lastCost = previousBillingInfo!.lastReportedCost;
 
             // If it's more than a certain amount send a slack message
-            this.logger.log(`You have spent $${spentSoFar} compared to $${lastCost} last time out`);
-            if (spentSoFar - lastCost > billingAlertIncrement) {
+            this.logger.log(`You have spent $${costAmount} compared to $${lastCost} last time out`);
+            if (costAmount - lastCost > billingAlertIncrement) {
                 sendMessage = true;
-                messageString = `You have now spent $${spentSoFar}`;
+                messageString = `You have now spent $${costAmount} of your target budget of $${budgetAmount} since ${costIntervalStart}`;
             }
 
         }
@@ -47,7 +47,7 @@ export default class BillingAlertsHandler {
 
         if (sendMessage) {
             const promises: Promise<any>[] = [
-                this.db.doc('/private/billing_info').set({ lastReportedCost: spentSoFar }),
+                this.db.doc('/private/billing_info').set({ lastReportedCost: costAmount }),
                 slack.chat.postMessage({
                     token: process.env.SLACK_ACCESS_TOKEN,
                     channel: 'billing-alerts',
