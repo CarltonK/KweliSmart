@@ -16,7 +16,7 @@ export default class HttpHandler {
         this.logger.log(request.path, request.method);
         const { method, path } = request;
 
-        if (method === 'POST' && path === 'localpubsub') { await this.localpubsub(request, response); return; }
+        if (method === 'POST' && path === '/localpubsub') { await this.localpubsub(request, response); return; }
 
         // return 405 METHOD NOT ALLOWED
         if (method !== 'POST') {
@@ -46,7 +46,7 @@ export default class HttpHandler {
                 this.logger.error('Could not convert JSON')
             }
         } catch (error) {
-            this.logger.error(`Got an error: ${error}`)
+            this.logger.error(`${error}`)
         }
 
         response.send({

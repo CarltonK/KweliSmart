@@ -1,9 +1,12 @@
 import { Logger } from '@firebase/logger';
 import * as functions from 'firebase-functions';
+import { firestore } from 'firebase-admin';
+import slack = require('slack');
 
 export default class BillingAlertsHandler {
 
     private logger: Logger = new Logger('BillingAlertsHandler');
+    private db = firestore();
 
     constructor() {
         this.logger.setLogLevel('debug');
@@ -20,6 +23,40 @@ export default class BillingAlertsHandler {
     }
 
     async handleBillingData(data: any) {
-        return null;
+        // Grab the most recent data
+        const billingInfoDoc = await this.db.doc('/private/billing_info').get();
+        const spentSoFar = data.costAmount;
+        const billingAlertIncrement = 0.01;
+        let sendMessage = false;
+        let messageString = '';
+
+        // Compare to what we had before
+        if (billingInfoDoc.exists) {
+            const previousBillingInfo = billingInfoDoc.data();
+            const lastCost = previousBillingInfo!.lastReportedCost;
+
+            // If it's more than a certain amount send a slack message
+            this.logger.log(`You have spent $${spentSoFar} compared to $${lastCost} last time out`);
+            if (spentSoFar - lastCost > billingAlertIncrement) {
+                sendMessage = true;
+                messageString = `You have now spent $${spentSoFar}`;
+            }
+
+        }
+
+
+        if (sendMessage) {
+            const promises: Promise<any>[] = [
+                this.db.doc('/private/billing_info').set({ lastReportedCost: spentSoFar }),
+                slack.chat.postMessage({
+                    token: process.env.SLACK_ACCESS_TOKEN,
+                    channel: 'billing-alerts',
+                    text: messageString,
+                }),
+            ];
+            return Promise.all(promises);
+        } else {
+            return null;
+        }
     }
 }
