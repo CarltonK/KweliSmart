@@ -17,3 +17,4 @@ services:
     tty: true
     environment: 
       NODE_ENV: "local"
+      SLACK_ACCESS_TOKEN: ""
